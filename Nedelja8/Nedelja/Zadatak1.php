@@ -6,55 +6,86 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
-<!-- Napraviti klasu Krevet, koja ima clanice: duzina, sirina, materijal i cena. Cena je private. 
-Napisati konstruktor koji dobija i  postavlja sve clanice.
-Napisati metodu za citanje cene.
-Napisati metodu __toString koja prikazuje: "Krevet je duzine... i sirine.... napravljen od.... po ceni ...."
-
-Napraviti dva objekta klase Krevet, sa podacima po zelji. Prikazati samo Krevet sa vecom cenom.
-
-U klasu krevet dodati metodu "popust" koja za dati popust u procentima - i smanjuje cenu za toliko procenata.
-Napraviti novi objekat klase Krevet, zatim ga prikazati, pozvati popust za 10% i prikazati ga opet. -->
-
 <body>
 
 <?php
 
-class Krevet {
 
-    public $duzina, $sirina, $materijal;
-    protected $cena;
 
-    public function __construct($duzina,$sirina,$materijal,$cena){
-        
-        $this->duzina = $duzina;
-        $this->sirina = $sirina;
-        $this->materijal = $materijal;
-        $this->cena = $cena;
+class SastojakHrane{
+
+    public $naziv,$mera,$kalorije;
+    public function __construct($naziv,$mera,$kalorije){
+
+        $this->naziv = $naziv;
+        $this->mera = $mera;
+        $this->kalorije = $kalorije;
+
     }
-    public function price(){
-        echo $this->cena;   
+
+    public function promeniMeru($nova_mera){
+
+        $this->mera = $nova_mera;
+
     }
-    public function __toString(){
-        return "Krevet je duzine ".$this->duzina." i sirine ".$this->sirina.", materijal je ".$this->materijal." i cena mu je ".$this->cena;
-    }
-    public function popust($popust){
-         $this->cena = $this->cena-($this->cena*($popust/100));
-         return $this->cena;
+    public function prikazi_sastojke(){
+
+        echo "<p>"."Naziv: ".$this->naziv." Mera: ".$this->mera." Kalorije: ".$this->kalorije;
+
     }
 
 }
 
-$krevet1 = new Krevet(200,150,"drvo",20000);
-$krevet2 = new Krevet(200,100,"metal",15000);
 
-echo $krevet1."<br>";
+class Jelo{
 
-$krevet3 = new Krevet(220,160,"drvo",24000);
-echo $krevet3."<br>";
-$krevet3->popust(10);
-echo $krevet3."<br>";
+    public $naslov,$opis,$sastojci;
 
+    public function __construct($naslov,$opis,$podaci){
+        $this->naslov = $naslov;
+        $this->opis = $opis;
+        $this->sastojci = [];
+        for($i=0;$i<count($podaci);$i++){
+            $sastojak = new SastojakHrane($podaci[$i]["naziv"],$podaci[$i]["mera"],$podaci[$i]["kalorije"]);
+            array_push($this->sastojci,$sastojak);
+        }
+    }
+
+    public function prikazi_jelo(){
+
+        echo "<p>".$this->naslov."<p>"."<p>".$this->opis."</p>";
+        for($i=0;$i<count($this->sastojci);$i++)
+           $this->sastojci[$i]->prikazi_sastojke();
+
+
+    }
+
+    public function promeniMeru($sastojak,$mera){
+
+        for($i=0;$i<count($this->sastojci);$i++){
+            if($this->sastojci[$i]->naziv == $sastojak){
+                $this->sastojci[$i]->promeniMeru($mera);
+            }
+        }
+
+
+        // foreach($this->sastojci as $value){
+        //     if($value->naziv == $sastojak){
+        //         $value->mera == promeniMeru($mera);
+        //     }
+        // }
+    }
+}
+    $podaci = [
+    ["naziv"=>"jaja", "mera"=>"2", "kalorije"=>300],
+    ["naziv"=>"brasno", "mera"=>"200g", "kalorije"=>600],
+    ["naziv"=>"secer", "mera"=>"20g", "kalorije"=>100],
+    ["naziv"=>"so", "mera"=>"5g", "kalorije"=>40]
+    ];
+    $jelo = new Jelo("Palačinke", "Najbolje jelo ikad", $podaci);
+    $jelo->prikazi_jelo();
+    $jelo->promeniMeru("brasno", "400g");
+    $jelo->prikazi_jelo();
 
 
 
